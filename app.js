@@ -13,20 +13,22 @@ app.use(
   })
 );
 app.set("trust proxy", 1);
-app.use(express.json());
-let sess = {
-  secret: "secret",
+const sessionOptions = {
+  secret: "any string",
   resave: false,
-  saveUninitialized: true,
-  //   cookie: { secure: false },
+  saveUninitialized: false,
 };
-// if (app.get("env") === "production") {
-//   app.set("trust proxy", 1);
-//   sess.cookie.secure = true;
-// }
-app.use(session(sess));
+if (process.env.NODE_ENV !== "development") {
+  sessionOptions.proxy = true;
+  sessionOptions.cookie = {
+    sameSite: "none",
+    secure: true,
+  };
+}
+app.use(session(sessionOptions));
+app.use(express.json());
 
 Examples(app);
 UserController(app);
 
-app.listen(4000);
+app.listen(process.env.PORT || 4000);
