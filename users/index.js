@@ -1,65 +1,79 @@
-import users from "./users.js";
+// import users from "./users.js";
+import * as dao from "./user-dao.js";
 
 let currentUser = null;
 
 function UserController(app) {
-  function getUsers(req, res) {
+  const getUsers = async (req, res) => {
     const { username } = req.query;
     if (username) {
-      const user = users.find((user) => user.username === username);
+      // const user = users.find((user) => user.username === username);
+      const user = await dao.findUserByUsername(username);
       res.json(user);
       return;
     }
+    const users = await dao.findAllUsers();
     res.json(users);
-  }
+  };
 
-  function getUserById(req, res) {
+  const getUserById = async (req, res) => {
     const { id } = req.params;
-    const user = users.find((user) => user._id === id);
+    // const user = users.find((user) => user._id === id);
+    const user = await dao.findUserById(id);
     res.json(user);
-  }
+  };
 
-  function getUserByUsername(req, res) {
+  const getUserByUsername = async (req, res) => {
     const { username } = req.params;
-    const user = users.find((user) => user.username === username);
+    // const user = users.find((user) => user.username === username);
+    const user = await dao.findUserByUsername(username);
     res.json(user);
-  }
+  };
 
-  function createUser(req, res) {
+  const createUser = async (req, res) => {
     const newUser = req.body;
     console.log(newUser);
-    users.push({
-      _id: new Date().getTime().toString(),
-      ...newUser,
-    });
-    res.json(users);
-  }
+    // users.push({
+    //   _id: new Date().getTime().toString(),
+    //   ...newUser,
+    // });
 
-  function removeUser(req, res) {
+    await dao.createUser(newUser);
+    const users = await dao.findAllUsers();
+
+    res.json(users);
+  };
+
+  const removeUser = async (req, res) => {
     const { id } = req.params;
-    const index = users.findIndex((user) => user._id === id);
-    users.splice(index, 1);
+    // const index = users.findIndex((user) => user._id === id);
+    // users.splice(index, 1);
+    await dao.deleteUser(id);
+    const users = await dao.findAllUsers();
     res.json(users);
-  }
+  };
 
-  function updateUser(req, res) {
+  const updateUser = async (req, res) => {
     const { id } = req.params;
     const newUser = req.body;
-    users.forEach((user, index) => {
-      if (user._id === id) {
-        users[index] = {
-          ...newUser,
-          _id: id,
-        };
-      }
-    });
+    // users.forEach((user, index) => {
+    //   if (user._id === id) {
+    //     users[index] = {
+    //       ...newUser,
+    //       _id: id,
+    //     };
+    //   }
+    // });
+    await dao.updateUser(id, newUser);
+    const users = await dao.findAllUsers();
     res.json(users);
-  }
+  };
 
-  const register = (req, res) => {
+  const register = async (req, res) => {
     const { username, password } = req.body;
 
-    const existingUser = users.find((user) => user.username === username);
+    // const existingUser = users.find((user) => user.username === username);
+    const existingUser = await dao.findUserByUsername(username);
 
     if (existingUser) {
       res.json({ error: "User already exists" });
@@ -67,21 +81,24 @@ function UserController(app) {
     }
 
     const user = {
-      _id: new Date().getTime().toString(),
       username,
       password,
     };
-    req.session["currentUser"] = user;
-    currentUser = user;
-    users.push(user);
-    res.json(user);
+
+    const actualUser = await dao.createUser(user);
+
+    req.session["currentUser"] = actualUser;
+    currentUser = actualUser;
+    // users.push(user);
+    res.json(actualUser);
   };
-  const login = (req, res) => {
+  const login = async (req, res) => {
     const { username, password } = req.body;
 
-    const user = users.find(
-      (user) => user.username === username && user.password === password
-    );
+    // const user = users.find(
+    //   (user) => user.username === username && user.password === password
+    // );
+    const user = await dao.findUserByCredentials({ username, password });
 
     if (!user) {
       res.json({ error: "User not found" });
