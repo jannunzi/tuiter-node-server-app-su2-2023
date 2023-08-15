@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./user-model.js";
+import User from "./model.js";
 
 export const findAllUsers = async () => {
   const users = await User.find().exec();
@@ -10,6 +10,8 @@ export const findUserByUsername = async (username) => {
   const user = await User.findOne({ username }).exec();
   return user;
 };
+
+export const findUsersByRole = (role) => User.find({ role });
 
 export const findUserById = async (id) => {
   const user = await User.findById(id).exec();

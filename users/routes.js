@@ -1,15 +1,20 @@
 // import users from "./users.js";
-import * as dao from "./user-dao.js";
+import * as dao from "./dao.js";
 
 let currentUser = null;
 
 function UserController(app) {
   const getUsers = async (req, res) => {
-    const { username } = req.query;
+    const { username, role } = req.query;
     if (username) {
       // const user = users.find((user) => user.username === username);
       const user = await dao.findUserByUsername(username);
       res.json(user);
+      return;
+    }
+    if (role) {
+      const users = await dao.findUserByRole(role);
+      res.json(users);
       return;
     }
     const users = await dao.findAllUsers();
