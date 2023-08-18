@@ -30,6 +30,18 @@ function AlbumLikesRoutes(app) {
     res.json(actualLikes);
   };
 
+  const getLikesForUser = async (req, res) => {
+    const userId = req.params.userId;
+    const likes = await likesDao.getLikesForUser(userId);
+    res.json(likes);
+  };
+  const getLikesForAlbum = async (req, res) => {
+    const albumId = req.params.albumId;
+    const likes = await likesDao.getLikesForAlbum(albumId);
+    res.json(likes);
+  };
+  app.get("/api/albums/:albumId/likes", getLikesForAlbum);
+  app.get("/api/users/:userId/likes", getLikesForUser);
   app.post("/api/albums/:albumId/likes", userLikesAlbum);
 }
 

@@ -38,15 +38,10 @@ function UserController(app) {
   const createUser = async (req, res) => {
     const newUser = req.body;
     console.log(newUser);
-    // users.push({
-    //   _id: new Date().getTime().toString(),
-    //   ...newUser,
-    // });
 
-    await dao.createUser(newUser);
-    const users = await dao.findAllUsers();
+    const actualUser = await dao.createUser(newUser);
 
-    res.json(users);
+    res.json(actualUser);
   };
 
   const removeUser = async (req, res) => {

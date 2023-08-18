@@ -3,11 +3,13 @@ import express from "express";
 import cors from "cors";
 import Examples from "./examples/routes.js";
 import UserController from "./users/routes.js";
-import CoursesController from "./courses/routes.js";
-import SectionsController from "./sections/routes.js";
-import EnrollmentsController from "./enrollments/routes.js";
+import CoursesController from "./canvas/courses/routes.js";
+import SectionsController from "./canvas/sections/routes.js";
+import EnrollmentsController from "./canvas/enrollments/routes.js";
 import SessionController from "./session/routes.js";
 import AlbumLikesRoutes from "./albumLikes/routes.js";
+import GenericApi from "./generic/index.js";
+import FollowsRoutes from "./follows/routes.js";
 import session from "express-session";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -51,5 +53,9 @@ SectionsController(app);
 EnrollmentsController(app);
 SessionController(app);
 AlbumLikesRoutes(app);
+GenericApi(app, "movies", {
+  title: String,
+});
+FollowsRoutes(app);
 
 app.listen(process.env.PORT || 4000);
