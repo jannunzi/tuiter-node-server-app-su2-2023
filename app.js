@@ -8,7 +8,7 @@ import SectionsController from "./canvas/sections/routes.js";
 import EnrollmentsController from "./canvas/enrollments/routes.js";
 import SessionController from "./session/routes.js";
 import AlbumLikesRoutes from "./albumLikes/routes.js";
-import GenericApi from "./generic/index.js";
+import GnrxApi from "./generic/index.js";
 import FollowsRoutes from "./follows/routes.js";
 import session from "express-session";
 import mongoose from "mongoose";
@@ -53,9 +53,22 @@ SectionsController(app);
 EnrollmentsController(app);
 SessionController(app);
 AlbumLikesRoutes(app);
-GenericApi(app, "movies", {
-  title: String,
+GnrxApi({
+  app,
+  collection: "movies",
+  schema: {
+    title: String,
+  },
 });
+GnrxApi({
+  app,
+  collection: "actors",
+  schema: {
+    firstName: String,
+    lastName: String,
+  },
+});
+GnrxApi({ app, collection: "casting", many1: "actors", many2: "movies" });
 FollowsRoutes(app);
 
 app.listen(process.env.PORT || 4000);

@@ -1,16 +1,18 @@
-function GenericRoutes(app, collectionName, dao) {
-  console.log("GenericRoutes");
-
+function GnrxRoutes(app, collectionName, dao) {
   const create = async (req, res) => {
     const obj = await dao.create(req.body);
     res.json(obj);
   };
-  //   const createRelation = async (req, res) => {
-  //     const obj = dao.createRelation({
-  //       ...req.body,
-  //       [collectionName]: req.params.id,
-  //     });
-  //   };
+  const createManyToMany = async (req, res) => {
+    const many1 = req.params.many1;
+    const id1 = req.params.id1;
+    const many2 = req.params.many2;
+    const id2 = req.params.id2;
+    const obj = await dao.createManyToMany({
+      [many1]: id1,
+      [many2]: id2,
+    });
+  };
   const findAll = async (req, res) => {
     const all = await dao.findAll();
     res.json(all);
@@ -33,6 +35,7 @@ function GenericRoutes(app, collectionName, dao) {
   //   };
 
   app.post(`/api/${collectionName}`, create);
+  app.post(`/api/${many1}/${id1}/${many2}/${id2}`, createManyToMany);
   //   app.post(`/api/${collectionName}/:id/${childCollectionName}`, createRelation);
   app.get(`/api/${collectionName}`, findAll);
   app.get(`/api/${collectionName}/:id`, findById);
@@ -44,4 +47,4 @@ function GenericRoutes(app, collectionName, dao) {
   //   );
 }
 
-export default GenericRoutes;
+export default GnrxRoutes;

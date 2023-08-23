@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-function GenericSchema(collectionName, schemaConfig) {
+function GnrxSchema(collectionName, schemaConfig) {
   const schema = mongoose.Schema(schemaConfig, { collection: collectionName });
   return schema;
 }
 
-export default GenericSchema;
+export default GnrxSchema;
